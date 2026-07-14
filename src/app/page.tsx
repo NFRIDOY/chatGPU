@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import axios from "axios";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
@@ -14,6 +14,12 @@ export default function ChatPage() {
   useEffect(() => {
     setMounted(true);
   }, []);
+
+  const bottomRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    bottomRef.current?.scrollIntoView({ behavior: "smooth" });
+  }, [messages]);
 
   const sendMessage = async () => {
     if (!prompt.trim()) return;
@@ -86,20 +92,45 @@ export default function ChatPage() {
 
     <div className="flex flex-col items-center p-6">
       <h1 className="text-2xl font-bold mb-4">Chat with Gemma 4</h1>
-      <div className="w-full max-w-lg border rounded p-4 h-96 overflow-y-auto bg-white">
+      {/* <div className="w-full rounded p-4 h-[80vh] overflow-y-auto bg-black text-white flex flex-col"> */}
+      <div className="w-full rounded p-4 h-[80vh] overflow-y-auto bg-black text-white flex flex-col ">
         {messages.map((m, i) => (
           <div
             key={i}
-            className={`mb-2 ${m.role === "user" ? "text-blue-600 font-semibold" : "text-gray-800"
+            className={`mb-2 ${m.role === "user" ? "text-white font-semibold bg-blue-900 rounded-lg p-2 ml-auto" : "text-white"
               }`}
           >
-            {m.role === "user" ? "You: " : "AI: "}
-            <div className="prose prose-sm max-w-none prose-table:w-full prose-table:border-collapse prose-table:border prose-table:border-gray-300 prose-thead:bg-gray-100 prose-th:border prose-th:border-gray-300 prose-th:px-3 prose-th:py-2 prose-th:text-left prose-th:font-semibold prose-tbody:divide-y prose-tbody:divide-gray-300 prose-tr:border-b prose-tr:border-gray-300 prose-td:border prose-td:border-gray-300 prose-td:px-3 prose-td:py-2">
+            {m.role === "user" ? "" : "AI: "}
+            {/* {m.role === "user" ? "You: " : "AI: "} */}
+            {/* <div className="prose prose-sm max-w-none prose-table:w-full prose-table:border-collapse prose-table:border prose-table:border-gray-300 prose-thead:bg-gray-100 prose-th:border prose-th:border-gray-300 prose-th:px-3 prose-th:py-2 prose-th:text-left prose-th:font-semibold prose-tbody:divide-y prose-tbody:divide-gray-300 prose-tr:border-b prose-tr:border-gray-300 prose-td:border prose-td:border-gray-300 prose-td:px-3 prose-td:py-2">
               <ReactMarkdown remarkPlugins={[remarkGfm]}>{m.content}</ReactMarkdown>
+            </div> */}
+            <div className="prose prose-sm max-w-none text-white">
+              <ReactMarkdown
+                remarkPlugins={[remarkGfm]}
+                components={{
+                  table: ({ node, ...props }) => (
+                    <table className="w-full border border-gray-300 border-collapse" {...props} />
+                  ),
+                  th: ({ node, ...props }) => (
+                    <th className="border border-gray-300 px-3 py-2 text-left font-semibold bg-gray-500" {...props} />
+                  ),
+                  td: ({ node, ...props }) => (
+                    <td className="border border-gray-300 px-3 py-2" {...props} />
+                  ),
+                  tr: ({ node, ...props }) => (
+                    <tr className="border border-gray-300" {...props} />
+                  ),
+                }}
+              >
+                {m.content}
+              </ReactMarkdown>
             </div>
+
           </div>
         ))}
-        {loading && <div className="text-gray-500">AI is thinking...</div>}
+        {loading && <div className="text-white">AI is thinking...</div>}
+        <div ref={bottomRef} />
       </div>
       <div className="flex w-full max-w-lg mt-4">
         <input
