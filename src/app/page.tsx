@@ -97,7 +97,7 @@ export default function ChatPage() {
         {messages.map((m, i) => (
           <div
             key={i}
-            className={`mb-2 ${m.role === "user" ? "text-white font-semibold bg-blue-900 rounded-lg p-2 ml-auto" : "text-amber-300"
+            className={`mb-2 ${m.role === "user" ? "text-white font-semibold bg-blue-950 rounded-2xl p-2 ml-auto" : "text-amber-300"
               }`}
           >
             <span className="text-amber-600 italic rounded-2xl">
@@ -107,7 +107,7 @@ export default function ChatPage() {
             {/* <div className="prose prose-sm max-w-none prose-table:w-full prose-table:border-collapse prose-table:border prose-table:border-gray-300 prose-thead:bg-gray-100 prose-th:border prose-th:border-gray-300 prose-th:px-3 prose-th:py-2 prose-th:text-left prose-th:font-semibold prose-tbody:divide-y prose-tbody:divide-gray-300 prose-tr:border-b prose-tr:border-gray-300 prose-td:border prose-td:border-gray-300 prose-td:px-3 prose-td:py-2">
               <ReactMarkdown remarkPlugins={[remarkGfm]}>{m.content}</ReactMarkdown>
             </div> */}
-            <div className={`prose prose-sm max-w-5xl text-white leading-loose ${m.role === "ai" ? "max-w-2 py-2 px-6 bg-green-950 rounded-2xl" : ""}`}>
+            <div className={`prose prose-sm max-w-5xl text-white leading-loose ${m.role === "ai" ? "max-w-2 py-3 px-6 rounded-2xl" : ""}`}>
               <ReactMarkdown
                 remarkPlugins={[remarkGfm]}
                 components={{
