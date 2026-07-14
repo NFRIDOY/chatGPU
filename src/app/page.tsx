@@ -36,7 +36,7 @@ export default function ChatPage() {
     setLoading(true);
 
     try {
-      const endpoint = `${apiUrl}/chat`;
+      const endpoint = `${apiUrl}/api/chat`;
       console.log("🔄 Sending request to:", endpoint);
       console.log("📦 Headers:", { "x-api-key": apiKey ? "***" : "none" });
 
