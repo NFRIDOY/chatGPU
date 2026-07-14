@@ -2,6 +2,8 @@
 
 import { useState, useEffect } from "react";
 import axios from "axios";
+import ReactMarkdown from "react-markdown";
+import remarkGfm from "remark-gfm";
 
 export default function ChatPage() {
   const [messages, setMessages] = useState<{ role: string; content: string }[]>([]);
@@ -31,7 +33,7 @@ export default function ChatPage() {
       const endpoint = `${apiUrl}/chat`;
       console.log("🔄 Sending request to:", endpoint);
       console.log("📦 Headers:", { "x-api-key": apiKey ? "***" : "none" });
-      
+
       const res = await axios.post(
         endpoint,
         { prompt: prompt },
@@ -40,12 +42,13 @@ export default function ChatPage() {
             "Content-Type": "application/json",
             ...(apiKey && { "x-api-key": apiKey }),
           },
-          timeout: 10000,
+          timeout: 60000,
           withCredentials: true,
         }
       );
 
       console.log("✅ Response received:", res.status);
+      console.log("📄 Response data:", res);
       setMessages(prev => [...prev, { role: "ai", content: res.data.reply || res.data.error }]);
     } catch (err: any) {
       console.error("❌ Full error object:", err);
@@ -53,7 +56,7 @@ export default function ChatPage() {
       console.error("Error config:", err.config?.url);
       console.error("Error status:", err.response?.status);
       console.error("Error response:", err.response?.data);
-      
+
       let errorMsg = "Error: ";
       if (err.code === "ECONNABORTED") {
         errorMsg += "Request timeout - server not responding";
@@ -68,7 +71,7 @@ export default function ChatPage() {
       } else {
         errorMsg += err.message || "Failed to fetch response";
       }
-      
+
       setMessages(prev => [...prev, { role: "ai", content: errorMsg }]);
     } finally {
       setPrompt("");
@@ -79,12 +82,21 @@ export default function ChatPage() {
   if (!mounted) return null;
 
   return (
+
+
     <div className="flex flex-col items-center p-6">
       <h1 className="text-2xl font-bold mb-4">Chat with Gemma 4</h1>
       <div className="w-full max-w-lg border rounded p-4 h-96 overflow-y-auto bg-white">
         {messages.map((m, i) => (
-          <div key={i} className={`mb-2 ${m.role === "user" ? "text-blue-600 font-semibold" : "text-gray-800"}`}>
-            {m.role === "user" ? "You: " : "AI: "} {m.content}
+          <div
+            key={i}
+            className={`mb-2 ${m.role === "user" ? "text-blue-600 font-semibold" : "text-gray-800"
+              }`}
+          >
+            {m.role === "user" ? "You: " : "AI: "}
+            <div className="prose prose-sm max-w-none prose-table:w-full prose-table:border-collapse prose-table:border prose-table:border-gray-300 prose-thead:bg-gray-100 prose-th:border prose-th:border-gray-300 prose-th:px-3 prose-th:py-2 prose-th:text-left prose-th:font-semibold prose-tbody:divide-y prose-tbody:divide-gray-300 prose-tr:border-b prose-tr:border-gray-300 prose-td:border prose-td:border-gray-300 prose-td:px-3 prose-td:py-2">
+              <ReactMarkdown remarkPlugins={[remarkGfm]}>{m.content}</ReactMarkdown>
+            </div>
           </div>
         ))}
         {loading && <div className="text-gray-500">AI is thinking...</div>}
@@ -106,5 +118,6 @@ export default function ChatPage() {
         </button>
       </div>
     </div>
+
   );
 }
