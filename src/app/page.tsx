@@ -93,19 +93,21 @@ export default function ChatPage() {
     <div className="flex flex-col items-center p-6">
       <h1 className="text-2xl font-bold mb-4">Chat with Gemma 4</h1>
       {/* <div className="w-full rounded p-4 h-[80vh] overflow-y-auto bg-black text-white flex flex-col"> */}
-      <div className="w-full rounded p-4 h-[80vh] overflow-y-auto bg-black text-white flex flex-col ">
+      <div className="w-full rounded-4xl p-4 h-[80vh] overflow-y-auto bg-black text-white flex flex-col  ">
         {messages.map((m, i) => (
           <div
             key={i}
-            className={`mb-2 ${m.role === "user" ? "text-white font-semibold bg-blue-900 rounded-lg p-2 ml-auto" : "text-white"
+            className={`mb-2 ${m.role === "user" ? "text-white font-semibold bg-blue-900 rounded-lg p-2 ml-auto" : "text-amber-300"
               }`}
           >
-            {m.role === "user" ? "" : "AI: "}
+            <span className="text-amber-600 italic rounded-2xl">
+              {m.role === "user" ? "" : "AI "}
+            </span>
             {/* {m.role === "user" ? "You: " : "AI: "} */}
             {/* <div className="prose prose-sm max-w-none prose-table:w-full prose-table:border-collapse prose-table:border prose-table:border-gray-300 prose-thead:bg-gray-100 prose-th:border prose-th:border-gray-300 prose-th:px-3 prose-th:py-2 prose-th:text-left prose-th:font-semibold prose-tbody:divide-y prose-tbody:divide-gray-300 prose-tr:border-b prose-tr:border-gray-300 prose-td:border prose-td:border-gray-300 prose-td:px-3 prose-td:py-2">
               <ReactMarkdown remarkPlugins={[remarkGfm]}>{m.content}</ReactMarkdown>
             </div> */}
-            <div className="prose prose-sm max-w-none text-white">
+            <div className={`prose prose-sm max-w-5xl text-white leading-loose ${m.role === "ai" ? "max-w-2 py-2 px-6 bg-green-950 rounded-2xl" : ""}`}>
               <ReactMarkdown
                 remarkPlugins={[remarkGfm]}
                 components={{
