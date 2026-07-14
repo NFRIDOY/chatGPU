@@ -15,6 +15,8 @@ export default function ChatPage() {
   const socketRef = useRef<Socket | null>(null);
   const bottomRef = useRef<HTMLDivElement>(null);
 
+  const inputRef = useRef<HTMLInputElement>(null);
+
   useEffect(() => {
     setMounted(true);
 
@@ -111,6 +113,20 @@ export default function ChatPage() {
     bottomRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages]);
 
+  // Auto-focus input after response or on mount
+  useEffect(() => {
+    if (mounted && !loading) {
+      inputRef.current?.focus();
+    }
+  }, [loading, mounted]);
+
+  useEffect(() => {
+    setMounted(true);
+    // Focus on initial load
+    setTimeout(() => inputRef.current?.focus(), 100);
+  }, []);
+
+
   const sendMessage = () => {
     if (!prompt.trim()) return;
 
@@ -124,7 +140,7 @@ export default function ChatPage() {
     }
 
     const currentPrompt = prompt;
-    
+
     // Map current messages history to standard Ollama format
     const history = messages.map(m => ({
       role: m.role === "user" ? "user" : "assistant",
@@ -137,6 +153,8 @@ export default function ChatPage() {
 
     console.log("📤 Sending prompt with history:", currentPrompt, history);
     socketRef.current.emit("chat-message", { prompt: currentPrompt, history });
+
+    setTimeout(() => inputRef.current?.focus(), 100);
   };
 
   if (!mounted) return null;
@@ -160,11 +178,10 @@ export default function ChatPage() {
         {/* Status Indicator */}
         <div className="flex items-center gap-2 bg-zinc-950/60 border border-zinc-800/50 rounded-full px-3 py-1.5">
           <span
-            className={`w-2.5 h-2.5 rounded-full transition-all duration-500 ${
-              connected
-                ? "bg-emerald-500 shadow-[0_0_8px_#10b981]"
-                : "bg-amber-500 animate-pulse shadow-[0_0_8px_#f59e0b]"
-            }`}
+            className={`w-2.5 h-2.5 rounded-full transition-all duration-500 ${connected
+              ? "bg-emerald-500 shadow-[0_0_8px_#10b981]"
+              : "bg-amber-500 animate-pulse shadow-[0_0_8px_#f59e0b]"
+              }`}
           />
           <span className="text-xs font-semibold text-zinc-300">
             {connected ? "Live Stream" : "Connecting"}
@@ -203,17 +220,15 @@ export default function ChatPage() {
             messages.map((m, i) => (
               <div
                 key={i}
-                className={`flex flex-col ${
-                  m.role === "user" ? "items-end" : "items-start"
-                }`}
+                className={`flex flex-col ${m.role === "user" ? "items-end" : "items-start"
+                  }`}
               >
                 {/* Bubble Wrapper */}
                 <div
-                  className={`relative max-w-[85%] rounded-2xl px-5 py-3.5 shadow-md ${
-                    m.role === "user"
-                      ? "bg-indigo-600/90 text-white rounded-tr-none"
-                      : "bg-zinc-800/80 border border-zinc-800/60 text-zinc-100 rounded-tl-none"
-                  }`}
+                  className={`relative max-w-[85%] rounded-2xl px-5 py-3.5 shadow-md ${m.role === "user"
+                    ? "bg-indigo-600/90 text-white rounded-tr-none"
+                    : "bg-zinc-800/80 border border-zinc-800/60 text-zinc-100 rounded-tl-none"
+                    }`}
                 >
                   <div className="prose prose-sm max-w-none text-zinc-100 leading-relaxed font-sans">
                     <ReactMarkdown
@@ -273,6 +288,7 @@ export default function ChatPage() {
         {/* Input Control Box */}
         <div className="border-t border-zinc-800/60 bg-zinc-900/80 p-4 md:p-6 flex gap-3">
           <input
+            ref={inputRef}
             type="text"
             value={prompt}
             onChange={e => setPrompt(e.target.value)}
@@ -294,7 +310,7 @@ export default function ChatPage() {
           </button>
         </div>
       </div>
-      
+
       {/* Footer Info */}
       <p className="text-zinc-600 text-[10px] uppercase tracking-widest mt-6">
         Connected via Socket.io Handshake Space
