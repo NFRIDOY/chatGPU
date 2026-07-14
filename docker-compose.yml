@@ -1,0 +1,20 @@
+services:
+  frontend:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        # Pass Next.js build-time variables. 
+        # By default, they pull from your host environment, falling back to local defaults if unset.
+        - NEXT_PUBLIC_API_URL=${NEXT_PUBLIC_API_URL:-http://localhost:9000/api}
+        - NEXT_PUBLIC_API_KEY=${NEXT_PUBLIC_API_KEY:-dockerai}
+    image: ollama-chat-frontend:latest
+    container_name: ollama-chat-frontend-app
+    ports:
+      - "9050:9050"
+    environment:
+      - NODE_ENV=production
+      - PORT=9050
+      - NEXT_PUBLIC_API_URL=${NEXT_PUBLIC_API_URL:-http://localhost:9000/api}
+      - NEXT_PUBLIC_API_KEY=${NEXT_PUBLIC_API_KEY:-dockerai}
+    restart: unless-stopped

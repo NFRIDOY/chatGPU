@@ -1,0 +1,38 @@
+# Dependecy directories
+node_modules
+
+# Next.js build output
+.next
+out
+build
+dist
+
+# Environment local files
+.env*.local
+
+# Version control and editor files
+.git
+.gitignore
+.vscode
+.idea
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+
+# Debug logs
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# Docker files
+Dockerfile
+docker-compose.yml
+.dockerignore
+
+# Agent configuration / docs
+AGENTS.md
+CLAUDE.md
+README.md
