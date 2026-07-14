@@ -124,12 +124,19 @@ export default function ChatPage() {
     }
 
     const currentPrompt = prompt;
+    
+    // Map current messages history to standard Ollama format
+    const history = messages.map(m => ({
+      role: m.role === "user" ? "user" : "assistant",
+      content: m.content
+    }));
+
     setPrompt(""); // Clear input field immediately
     setMessages(prev => [...prev, { role: "user", content: currentPrompt }]);
     setLoading(true);
 
-    console.log("📤 Sending prompt:", currentPrompt);
-    socketRef.current.emit("chat-message", { prompt: currentPrompt });
+    console.log("📤 Sending prompt with history:", currentPrompt, history);
+    socketRef.current.emit("chat-message", { prompt: currentPrompt, history });
   };
 
   if (!mounted) return null;
