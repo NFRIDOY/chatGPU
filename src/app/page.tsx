@@ -55,7 +55,7 @@ export default function ChatPage() {
 
       console.log("✅ Response received:", res.status);
       console.log("📄 Response data:", res);
-      setMessages(prev => [...prev, { role: "ai", content: res.data.reply || res.data.error, duration: res.data.duration }]);
+      setMessages(prev => [...prev, { role: "ai", content: res.data.reply || res.data.error, duration: res.data?.duration }]);
     } catch (err: any) {
       console.error("❌ Full error object:", err);
       console.error("Error code:", err.code);
