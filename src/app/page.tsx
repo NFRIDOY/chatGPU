@@ -48,7 +48,7 @@ export default function ChatPage() {
             "Content-Type": "application/json",
             ...(apiKey && { "x-api-key": apiKey }),
           },
-          timeout: 60000,
+          timeout: 60 * 5 * 1000,
           withCredentials: true,
         }
       );
