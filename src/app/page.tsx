@@ -6,7 +6,7 @@ import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 
 export default function ChatPage() {
-  const [messages, setMessages] = useState<{ role: string; content: string }[]>([]);
+  const [messages, setMessages] = useState<{ role: string; content: string; duration?: number }[]>([]);
   const [prompt, setPrompt] = useState("");
   const [loading, setLoading] = useState(false);
   const [mounted, setMounted] = useState(false);
@@ -55,7 +55,7 @@ export default function ChatPage() {
 
       console.log("✅ Response received:", res.status);
       console.log("📄 Response data:", res);
-      setMessages(prev => [...prev, { role: "ai", content: res.data.reply || res.data.error }]);
+      setMessages(prev => [...prev, { role: "ai", content: res.data.reply || res.data.error, duration: res.data.duration }]);
     } catch (err: any) {
       console.error("❌ Full error object:", err);
       console.error("Error code:", err.code);
@@ -125,6 +125,9 @@ export default function ChatPage() {
               >
                 {m.content}
               </ReactMarkdown>
+              {
+                m.role === "ai" && <span className="text-gray-400 text-sm"> {m?.duration}s</span>
+              }
             </div>
 
           </div>
@@ -148,7 +151,7 @@ export default function ChatPage() {
           Send
         </button>
       </div>
-    </div>
+    </div >
 
   );
 }
