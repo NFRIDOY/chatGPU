@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 
@@ -16,6 +16,10 @@ export const metadata: Metadata = {
   title: "ChatGPU",
   description: "ChatGPU is an AI-powered chat platform that delivers fast, intelligent, and interactive conversations. Designed for developers, researchers, and tech enthusiasts, it combines cutting-edge GPU acceleration with natural language understanding to provide seamless communication, productivity, and knowledge sharing.",
 };
+
+// export const viewport: Viewport = {
+//   themeColor: '#0a0a0a',
+// }
 
 
 export default function RootLayout({

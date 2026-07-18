@@ -1,5 +1,7 @@
 "use client";
 
+import axios from "axios";
+import Image from "next/image";
 import { useState, useEffect, useRef } from "react";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
@@ -11,11 +13,14 @@ export default function ChatPage() {
   const [loading, setLoading] = useState(false);
   const [connected, setConnected] = useState(false);
   const [mounted, setMounted] = useState(false);
+  const [isServerActive, setIsServerActive] = useState(false);
 
   const socketRef = useRef<Socket | null>(null);
   const bottomRef = useRef<HTMLDivElement>(null);
 
   const inputRef = useRef<HTMLInputElement>(null);
+
+
 
   useEffect(() => {
     setMounted(true);
@@ -126,6 +131,27 @@ export default function ChatPage() {
     setTimeout(() => inputRef.current?.focus(), 100);
   }, []);
 
+  useEffect(() => {
+    const apiUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:9000";
+
+    const isServerOn = async () => {
+      try {
+        const res = await axios.get(apiUrl + "/api/health");
+        const data = res.data; // axios already parses JSON
+        console.log("Health check response:", data);
+
+        if (data) {
+          setIsServerActive(true);
+        }
+      } catch (err) {
+        console.error("Server health check failed:", err);
+        setIsServerActive(false);
+      }
+    };
+
+    isServerOn();
+  }, []);
+
 
   const sendMessage = () => {
     if (!prompt.trim()) return;
@@ -165,13 +191,16 @@ export default function ChatPage() {
       <div className="w-full max-w-4xl flex items-center justify-between bg-zinc-900/40 backdrop-blur-md border border-zinc-800/80 rounded-2xl px-6 py-4 mb-6 shadow-lg">
         <div className="flex items-center gap-3">
           <div className="w-10 h-10 rounded-xl bg-indigo-600/20 border border-indigo-500/30 flex items-center justify-center">
-            <span className="font-extrabold text-indigo-400 text-lg">G</span>
+            <span className="font-extrabold text-indigo-400 text-lg">
+              <Image src="/logo/ailogo.png" alt="Logo" width={50} height={50} />
+            </span>
           </div>
           <div>
             <h1 className="text-xl font-bold tracking-tight bg-linear-to-r from-white to-zinc-400 bg-clip-text text-transparent">
-              Gemma 4 Chat
+              ChatGPU
             </h1>
-            <p className="text-xs text-zinc-500">Real-time local AI assistant</p>
+            <p className="text-xs text-zinc-500">OrionT Presents : ChatGPU </p>
+            <p className="text-xs text-zinc-500">A Real-time local AI assistant</p>
           </div>
         </div>
 
@@ -312,8 +341,13 @@ export default function ChatPage() {
       </div>
 
       {/* Footer Info */}
-      <p className="text-zinc-600 text-[10px] uppercase tracking-widest mt-6">
-        Connected via Socket.io Handshake Space
+      <p className="text-zinc-600 text-[7px] uppercase tracking-widest mt-6">
+        Copyright &copy; {new Date().getFullYear()} All rights reserved by OrionT |
+        Connected via Socket.io Handshake Space | Powered by Venomax | Developed by <a href="https://github.com/NFRIDOY" target="_blank" className="text-blue-400 hover:text-blue-600 transition-colors">NF Ridoy </a> |
+        {/* </p>
+      <p className="text-zinc-600 text-[7px] uppercase tracking-widest mt-3"> */}
+        {" "}If You Found This AI is not working, Please Contact <a href="https://www.linkedin.com/in/nfridoy" target="_blank" className="text-blue-400 hover:text-blue-600 transition-colors">Developer </a>
+        | If You Found This Useful, Give A Like And Share To Your Friends And Colleagues
       </p>
     </div>
   );
